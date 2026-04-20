@@ -67,6 +67,13 @@ APP_BASE_URL=http://192.168.1.50:8080
 
 Docker版は初回起動時に `schema.sql` をMariaDBへ自動投入します。部品データは空の状態で始まります。
 
+`schema.sql` を修正したあとに既存のDocker DBを作り直す場合は、DBボリュームを削除してから再起動します。
+
+```bash
+docker compose down -v
+docker compose up -d --build
+```
+
 停止:
 
 ```bash
