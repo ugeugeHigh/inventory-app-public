@@ -1,0 +1,24 @@
+config.php
+.codex
+seed_usbasp_parts.sql
+share_*.jpg
+
+# Local environment files
+.env
+.env.*
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Logs and runtime output
+*.log
+logs/
+tmp/
+uploads/
+
+# Python helper cache
+__pycache__/
+*.pyc
