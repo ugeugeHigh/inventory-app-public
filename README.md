@@ -22,15 +22,22 @@
 
 ## 前提
 
+Docker Composeで起動する場合:
+
+- Docker Desktop または Docker Engine
+- Docker Compose v2
+
+Docker Composeで起動する場合、PHP、Apache、MariaDB、Python QR生成ライブラリはコンテナ内に入るため、個別インストールは不要です。
+
+通常のPHP/MySQLサーバーへ配置する場合:
+
 - PHP 8+
 - MySQL / MariaDB
 - Python 3
 - Pythonライブラリ: `qrcode`, `Pillow`
 - QRラベル印刷を使う場合: CUPS、Phomemo M110Sプリンタ
 
-Docker Composeで起動する場合、PHP、Apache、MariaDB、Python QR生成ライブラリはコンテナ内に入るため、個別インストールは不要です。
-
-Pythonライブラリが未導入の場合は、環境に合わせてインストールしてください。
+通常配置でPythonライブラリが未導入の場合は、環境に合わせてインストールしてください。
 
 ```bash
 pip install qrcode pillow
@@ -96,6 +103,62 @@ docker compose exec db mariadb-dump -u root -p xian_parts_v2 > backup.sql
 
 ```bash
 docker compose exec -T db mariadb -u root -p xian_parts_v2 < backup.sql
+```
+
+### Dockerが未インストールの場合
+
+Windows / macOSでは、Docker Desktopをインストールするのが一番簡単です。
+
+- Docker Desktop: https://www.docker.com/products/docker-desktop/
+
+インストール後、ターミナルで次を確認します。
+
+```bash
+docker --version
+docker compose version
+```
+
+LinuxではDocker EngineとDocker Compose pluginをインストールします。Ubuntu / Linux Mint系の例:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+cat <<EOF | sudo tee /etc/apt/sources.list.d/docker.sources >/dev/null
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl enable --now docker
+```
+
+一般ユーザーで `docker` コマンドを使いたい場合:
+
+```bash
+sudo usermod -aG docker "$USER"
+```
+
+設定反映にはログアウト/ログイン、または次の実行が必要です。
+
+```bash
+newgrp docker
+```
+
+確認:
+
+```bash
+docker --version
+docker compose version
+docker run hello-world
 ```
 
 ### 通常のPHP/MySQLサーバーへ配置
