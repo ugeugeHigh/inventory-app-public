@@ -28,6 +28,8 @@
 - Pythonライブラリ: `qrcode`, `Pillow`
 - QRラベル印刷を使う場合: CUPS、Phomemo M110Sプリンタ
 
+Docker Composeで起動する場合、PHP、Apache、MariaDB、Python QR生成ライブラリはコンテナ内に入るため、個別インストールは不要です。
+
 Pythonライブラリが未導入の場合は、環境に合わせてインストールしてください。
 
 ```bash
@@ -35,6 +37,61 @@ pip install qrcode pillow
 ```
 
 ## セットアップ
+
+### Docker Composeで起動
+
+Docker DesktopまたはDocker Engineが使える環境では、次の手順で起動できます。
+
+```bash
+cp .env.example .env
+docker compose up -d --build
+```
+
+ブラウザで開きます。
+
+```text
+http://localhost:8080
+```
+
+`.env` の `APP_PORT` を変えると公開ポートを変更できます。
+
+```env
+APP_PORT=8080
+```
+
+スマホでQRコードを読む場合は、スマホからアクセスできるURLを `.env` の `APP_BASE_URL` に設定してください。
+
+```env
+APP_BASE_URL=http://192.168.1.50:8080
+```
+
+Docker版は初回起動時に `schema.sql` をMariaDBへ自動投入します。部品データは空の状態で始まります。
+
+停止:
+
+```bash
+docker compose down
+```
+
+DBデータも含めて完全に削除:
+
+```bash
+docker compose down -v
+```
+
+バックアップ例:
+
+```bash
+docker compose exec db mariadb-dump -u root -p xian_parts_v2 > backup.sql
+```
+
+復元例:
+
+```bash
+docker compose exec -T db mariadb -u root -p xian_parts_v2 < backup.sql
+```
+
+### 通常のPHP/MySQLサーバーへ配置
 
 1. MySQLで `schema.sql` を実行します。
 2. `config.sample.php` を `config.php` にコピーします。
@@ -286,6 +343,11 @@ BOMグループで管理する項目:
 - `index.php`: ダッシュボード
 - `config.php`: DB接続情報、APIキー、任意の `APP_BASE_URL`
 - `config.sample.php`: 共有用設定サンプル
+- `config.docker.php`: Docker版で使う環境変数対応設定
+- `.env.example`: Docker Compose用の設定サンプル
+- `Dockerfile`: PHP/Apacheアプリコンテナ定義
+- `docker-compose.yml`: アプリとMariaDBを起動するCompose定義
+- `docker/`: Apache/PHP設定
 - `schema.sql`: 初期DBスキーマ
 - `parts.php`: 部品一覧
 - `part_form.php`: 部品追加・編集

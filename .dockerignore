@@ -1,0 +1,11 @@
+.git
+.env
+.env.*
+config.php
+seed_usbasp_parts.sql
+share_*.jpg
+logs/
+tmp/
+uploads/
+__pycache__/
+*.pyc
