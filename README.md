@@ -59,11 +59,13 @@ http://127.0.0.1:8099/index.php
 ## 基本画面
 
 `index.php` がダッシュボードです。登録部品数、登録製品数、在庫不足数、登録基板数、保管場所設定済み数を確認できます。各機能への入口もここに並びます。
+各ページにはダッシュボードへ戻るリンクがあります。
 
 主な画面:
 
 - `parts.php`: 部品一覧
 - `part_form.php`: 部品追加・編集
+- `part_label_sheet.php`: 部品QRラベル一括印刷
 - `storage_locations.php`: 保管場所一覧
 - `products.php`: 製品一覧
 - `product_form.php`: 製品追加・編集
@@ -72,7 +74,6 @@ http://127.0.0.1:8099/index.php
 - `product_bom.php`: 製品構成編集
 - `bom_import.php`: KiCad BOM取込
 - `unmatched_mpn.php`: 未一致MPN一覧
-- `bom_list.php`: BOM一覧
 - `part_qr.php`: 部品QRラベル
 
 ## 部品管理
@@ -113,6 +114,11 @@ http://127.0.0.1:8099/index.php
 - 保管場所一覧からも、場所に入っている部品の追加・解除ができます。
 - 保管場所一覧で部品をチェックすると、選択した部品のQRラベルをまとめて印刷できます。
 - 印刷形式はPhomemo M110S用の40x30mm連続印刷と、普通のインクジェットプリンター向けA4シートを選べます。
+
+一括印刷は `part_label_sheet.php` で表示します。
+
+- `mode=m110s`: Phomemo M110S 40x30mmラベルを1枚ずつ印刷
+- `mode=a4`: 普通のインクジェットプリンター向けにA4紙へ複数ラベルを配置
 
 ## QRラベル
 
@@ -261,12 +267,6 @@ BOMグループで管理する項目:
 - 不要な候補は無視できます。
 - 未一致が多い場合は、先に部品マスタへMPN付きで部品登録すると後の取込が楽になります。
 
-## BOM一覧
-
-`bom_list.php` では、製品ごとの登録済みBOMを一覧確認できます。
-
-![BOM一覧](docs/images/bom-list.png)
-
 ## 推奨運用フロー
 
 1. 部品を登録します。
@@ -291,6 +291,7 @@ BOMグループで管理する項目:
 - `part_form.php`: 部品追加・編集
 - `part_detail.php`: 部品詳細
 - `part_qr.php`: QRラベル画面、QR画像、M110S PNG出力
+- `part_label_sheet.php`: 部品QRラベル一括印刷、A4印刷
 - `part_taxonomy.php`: 部品分類、自動分類ルール
 - `storage_schema.php`: 保管場所テーブルの作成・補助関数
 - `storage_locations.php`: 保管場所一覧、部品割当
@@ -305,7 +306,6 @@ BOMグループで管理する項目:
 - `product_bom_schema.php`: 複数BOM用テーブル作成・移行
 - `bom_import.php`: KiCad BOM CSV取込
 - `unmatched_mpn.php`: 未一致MPN解決
-- `bom_list.php`: BOM一覧
 - `tools/m110s_label_png.py`: QR画像、M110S用1bit PNG生成
 - `tools/classify_parts.php`: 既存部品の分類更新ツール
 - `docs/images/`: README用スクリーンショット
@@ -318,6 +318,7 @@ BOMグループで管理する項目:
 - `product_lots`: 出荷ロット、Lot ID、出荷日、ラベルバッチ
 - `product_boms`: 製品ごとのBOMグループ
 - `product_components`: BOM内の構成部品
+- `unmatched_bom_items`: BOM取込時に既存部品へ一致しなかったMPN
 - `storage_locations`: 部品箱、小部品箱、チャック袋などの保管場所
 - `part_storage_locations`: 部品と保管場所の多対多対応
 
@@ -343,7 +344,6 @@ firefox --headless --window-size=1365,1000 --screenshot docs/images/product-lot-
 firefox --headless --window-size=1365,1000 --screenshot docs/images/product-bom.png http://127.0.0.1:8099/product_bom.php?product_id=1
 firefox --headless --window-size=1365,1000 --screenshot docs/images/bom-import.png http://127.0.0.1:8099/bom_import.php
 firefox --headless --window-size=1365,1000 --screenshot docs/images/unmatched-mpn.png http://127.0.0.1:8099/unmatched_mpn.php
-firefox --headless --window-size=1365,900 --screenshot docs/images/bom-list.png http://127.0.0.1:8099/bom_list.php
 firefox --headless --window-size=1365,900 --screenshot docs/images/qr-label.png http://127.0.0.1:8099/part_qr.php?id=1
 ```
 
